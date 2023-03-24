@@ -1,0 +1,13 @@
+# Discord #
+
+# Discord bot token
+DISCORD_TOKEN: ""
+# Discord bot prefix
+PREFIX: ""
+# Discord logs channel id
+LOGS_CHANNEL: 
+
+# Luraph #
+
+# Luraph API Key
+LURAPH_API_KEY: ""
