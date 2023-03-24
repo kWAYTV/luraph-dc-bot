@@ -1,8 +1,7 @@
-import json, base64, os, requests, discord
+import json, requests
 from discord.ext import commands
-from .config import Config
-from colorama import Fore, init, Style
-from datetime import datetime
+from src.config.config import Config
+from colorama import Fore, Style
 
 class Luraph:
 
@@ -23,7 +22,7 @@ class Luraph:
     # Obfuscate script
     async def obfuscate(self, filename: str, node: str, script: str, useTokens: bool):
 
-        with open("src/util/options.json", "r") as f:
+        with open("src/config/luraph_options.json", "r") as f:
             options = json.load(f)
 
         url = f"{self.endpoint}/obfuscate/new"

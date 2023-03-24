@@ -1,12 +1,10 @@
 import discord, json
-from src.util.config import Config
-from discord.ext.commands import CommandNotFound
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord import app_commands
 from datetime import datetime
-from colorama import Fore, init, Style
+from colorama import Fore, Style
 from src.util.luraphUtil import Luraph
-from src.util.utils import Utils
+from src.util.logger import Logger
 
 class Job(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -42,8 +40,8 @@ class Job(commands.Cog):
 
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Sent status to {interaction.user.name}#{interaction.user.discriminator}.")
 
-        await Utils(self.bot).log(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe checked the status of job `{jobid}`.\nStatus: `{status}`")
-        await Utils(self.bot).send_warning(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe checked the status of job `{jobid}`.\nStatus: `{status}`")
+        await Logger(self.bot).log(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\n\nID Checked: `{jobid}`.\nStatus: `{status}`")
+        await Logger(self.bot).send_warning(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\n\nID Checked: `{jobid}`.\nStatus: `{status}`")
 
     @job_command.error
     async def job_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
@@ -54,3 +52,4 @@ class Job(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Job(bot))
+    print(f"[{Fore.MAGENTA}INFO{Fore.RESET}] {Fore.GREEN}Loaded job command!")

@@ -1,9 +1,8 @@
 import discord
-from src.util.config import Config
-from discord.ext.commands import CommandNotFound
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord import app_commands
 from datetime import datetime
+from colorama import Fore
 
 class Ping(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -30,3 +29,4 @@ class Ping(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Ping(bot))
+    return print(f"[{Fore.MAGENTA}INFO{Fore.RESET}] {Fore.GREEN}Ping command loaded!")

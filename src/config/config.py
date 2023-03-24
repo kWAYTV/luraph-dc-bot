@@ -1,6 +1,5 @@
 from yaml import SafeLoader
-import yaml 
-import sys
+import yaml
 
 class Config():
     def __init__(self):
