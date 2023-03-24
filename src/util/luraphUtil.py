@@ -1,11 +1,8 @@
-import json
-import requests
-import discord
+import json, base64, os, requests, discord
 from discord.ext import commands
 from .config import Config
 from colorama import Fore, init, Style
 from datetime import datetime
-
 
 class Luraph:
 
@@ -43,7 +40,7 @@ class Luraph:
     async def check_status(self, jobId: str):
         url = f"{self.endpoint}/obfuscate/status/{jobId}"
         response = requests.get(url, headers=self.headers)
-        if response.text == "":
+        if response.text == "" or response.text == True:
             return True
         else:
             data = json.loads(response.text)

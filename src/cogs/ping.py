@@ -11,6 +11,7 @@ class Ping(commands.Cog):
 
     # Ping bot command  
     @app_commands.command(name="ping", description="Command to test the bot")
+    @app_commands.checks.has_permissions(administrator=True)
     async def ping_command(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
         latency = round(self.bot.latency *  1000)

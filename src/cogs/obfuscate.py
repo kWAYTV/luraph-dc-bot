@@ -1,4 +1,4 @@
-import discord, requests, base64, os
+import discord, requests, base64, os, json
 from src.util.config import Config
 from discord.ext.commands import CommandNotFound
 from discord.ext import commands, tasks
@@ -6,6 +6,7 @@ from colorama import Fore, init, Style
 from discord import app_commands
 from datetime import datetime
 from src.util.luraphUtil import Luraph
+from src.util.utils import Utils
 
 class Obfuscate(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -13,8 +14,11 @@ class Obfuscate(commands.Cog):
 
     # Obfuscate command  
     @app_commands.command(name="obfuscate", description="Obfuscate your code.")
+    @app_commands.checks.has_permissions(administrator=True)
     async def obfuscate_command(self, interaction: discord.Interaction, link: str):
         await interaction.response.defer(ephemeral=True)
+
+        await Utils().log(f"{Fore.GREEN} > {Style.RESET_ALL}Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).")
 
         # If the folder data doesn't exist, create it
         if not os.path.exists("temp"):
@@ -62,8 +66,10 @@ class Obfuscate(commands.Cog):
             status = "Finished"
             print(f"{Fore.GREEN} > {Style.RESET_ALL}Obfuscation status: {status}")
         else:
-            print(f"{Fore.RED} > {Style.RESET_ALL}Error on the obfuscation: {status}")
-            await interaction.followup.send(f"Error on the obfuscation: {status}")
+            status = json.loads(status)
+            status = status["error"]
+            print(f"{Fore.RED} > {Style.RESET_ALL}Error on the status of job {jobid}: {status}")
+            await interaction.followup.send(f"Error on the status of job {jobid}: {status}")
             return
 
         # Download the obfuscated file
@@ -77,7 +83,8 @@ class Obfuscate(commands.Cog):
         
         # Send an embed to confirm the obfuscation
         embed = discord.Embed(title="Obfuscation done!", description="We've finished obfuscating your code.", color=0x00ff00)
-        embed.add_field(name="Obfuscated from", value=f"`{link}`")
+        embed.add_field(name="Obfuscated from", value=f"`{link}`", inline=False)
+        embed.add_field(name="Job ID", value=f"`{jobId}`", inline=False)
         embed.set_footer(text=f"Requested by {interaction.user.name}#{interaction.user.discriminator}", icon_url="https://i.imgur.com/FdZlWFr.png")
         embed.set_thumbnail(url="https://i.imgur.com/FdZlWFr.png")
         embed.timestamp = datetime.utcnow()
