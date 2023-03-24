@@ -1,0 +1,8 @@
+{
+    "INTENSE_VM_STRUCTURE": true,
+    "ENABLE_GC_FIXES": true,
+    "TARGET_VERSION": "CS:GO",
+    "VM_ENCRYPTION": true,
+    "DISABLE_LINE_INFORMATION": true,
+    "USE_DEBUG_LIBRARY": false
+}

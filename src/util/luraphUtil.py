@@ -1,10 +1,13 @@
-import json, requests, discord
+import json
+import requests
+import discord
 from discord.ext import commands
 from .config import Config
 from colorama import Fore, init, Style
 from datetime import datetime
 
-class Luraph():
+
+class Luraph:
 
     def __init__(self, bot: commands.Bot):
         self.endpoint = "https://api.lura.ph/v1"
@@ -18,31 +21,44 @@ class Luraph():
         response = requests.get(url, headers=self.headers)
         data = json.loads(response.text)
         return data["recommendedId"]
-    
+
     async def obfuscate(self, filename: str, node: str, script: str, useTokens: bool):
 
-        options = {
-            "INTENSE_VM_STRUCTURE": true,
-            "ENABLE_GC_FIXES": true,
-            "TARGET_VERSION": "CS:GO",
-            "VM_ENCRYPTION": true,
-            "DISABLE_LINE_INFORMATION": true,
-            "USE_DEBUG_LIBRARY": false,
+        with open("src/util/options.json", "r") as f:
+            options = json.load(f)
+
+        url = f"{self.endpoint}/obfuscate/new"
+
+        request_body = {
+            "fileName": filename,
+            "node": node,
+            "script": script.decode('utf-8'), # convert bytes to str
+            "options": options,
         }
 
-        url = f"{self.endpoint}/obfuscate/new?filename={filename}&node={node}&script={script}&options={options}"
-        response = requests.get(url, headers=self.headers)
+        response = requests.post(url, headers=self.headers, json=request_body)
         data = json.loads(response.text)
         return data["jobId"]
-    
+
     async def check_status(self, jobId: str):
-        url = f"{self.endpoint}/obfuscate/status/:{jobId}"
+        url = f"{self.endpoint}/obfuscate/status/{jobId}"
         response = requests.get(url, headers=self.headers)
-        data = json.loads(response.text)
-        return data
+        if response.text == "":
+            return True
+        else:
+            data = json.loads(response.text)
+            return data["status"]
 
     async def download_obfuscated(self, jobId: str):
-        url = f"{self.endpoint}/obfuscate/download/:{jobId}"
+        url = f"{self.endpoint}/obfuscate/download/{jobId}"
         response = requests.get(url, headers=self.headers)
-        data = json.loads(response.text)
-        return data["script"]
+
+        obfuscated_file_path = "temp/obfuscated.lua"
+        
+        # Write the obfuscated file to a file
+        with open(obfuscated_file_path, "wb") as f:
+            f.write(response.content)
+            print(f"{Fore.GREEN} > {Style.RESET_ALL}Wrote obfuscated file to {obfuscated_file_path}.")
+
+        return True
+
