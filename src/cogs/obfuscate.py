@@ -18,14 +18,25 @@ class Obfuscate(commands.Cog):
     async def obfuscate_command(self, interaction: discord.Interaction, link: str):
         await interaction.response.defer(ephemeral=True)
 
+        # Change the semaphore to True
+        await Utils(self.bot).change_semaphore(True)
+
+        # Get semaphore status
+        semaphore = await Utils(self.bot).get_semaphore()
+        if semaphore:
+            await interaction.followup.send("Sorry, but the bot is currently busy. Please try again later.", ephemeral=True)
+            return
+
         await Utils(self.bot).log(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).")
 
         # Send a message to the user to make them wait
         await interaction.followup.send(f"Obfuscating your code...")
 
+        tempdir = f"temp-{interaction.user.id}"
+
         # If the folder data doesn't exist, create it
-        if not os.path.exists("temp"):
-            os.mkdir("temp")
+        if not os.path.exists(tempdir):
+            os.mkdir(tempdir)
             print(f"{Fore.GREEN} > {Style.RESET_ALL}Created folder 'temp'.")
         
         # Retrieve the Lua file from the specified URL
@@ -37,8 +48,8 @@ class Obfuscate(commands.Cog):
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Converted Lua file to Base64.")
 
         # Set paths
-        to_obf_file_path = "temp/to_obf.lua"
-        obfuscated_file_path = "temp/obfuscated.lua"
+        to_obf_file_path = f"{tempdir}/to_obf.lua"
+        obfuscated_file_path = f"{tempdir}/obfuscated.lua"
 
         # Write the obfuscated Lua code to a file
         with open(to_obf_file_path, "wb") as f:
@@ -52,6 +63,7 @@ class Obfuscate(commands.Cog):
         else:
             print(f"{Fore.RED} > {Style.RESET_ALL}Error getting the recommended node.")
             await interaction.followup.send("Error getting the recommended node.")
+            await Utils(self.bot).change_semaphore(False)
             return
 
         # Obfuscate the lua with luraph
@@ -61,6 +73,7 @@ class Obfuscate(commands.Cog):
         else:
             print(f"{Fore.RED} > {Style.RESET_ALL}Error starting obfuscation.")
             await interaction.followup.send("Error starting obfuscation.")
+            await Utils(self.bot).change_semaphore(False)
             return
 
         # Check the status of the obfuscation
@@ -73,15 +86,17 @@ class Obfuscate(commands.Cog):
             status = status["error"]
             print(f"{Fore.RED} > {Style.RESET_ALL}Error on the status of job {jobid}: {status}")
             await interaction.followup.send(f"Error on the status of job {jobid}: {status}")
+            await Utils(self.bot).change_semaphore(False)
             return
 
         # Download the obfuscated file
-        obfuscated_file = await Luraph(self.bot).download_obfuscated(jobId)
+        obfuscated_file = await Luraph(self.bot).download_obfuscated(jobId, interaction.user.id)
         if obfuscated_file:
             print(f"{Fore.GREEN} > {Style.RESET_ALL}Obfuscated file downloaded.")
         else:
             print(f"{Fore.RED} > {Style.RESET_ALL}Error downloading obfuscated file.")
             await interaction.followup.send("Error downloading obfuscated file.")
+            await Utils(self.bot).change_semaphore(False)
             return
         
         # Send an embed to confirm the obfuscation
@@ -91,17 +106,20 @@ class Obfuscate(commands.Cog):
         embed.set_footer(text=f"Requested by {interaction.user.name}#{interaction.user.discriminator}", icon_url="https://i.imgur.com/FdZlWFr.png")
         embed.set_thumbnail(url="https://i.imgur.com/FdZlWFr.png")
         embed.timestamp = datetime.utcnow()
-        await interaction.followup.send(embed=embed)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
         with open(obfuscated_file_path, "rb") as f:
             await interaction.followup.send(content="Here's your obfuscated code:", file=discord.File(f), ephemeral=True)
 
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Sent obfuscated file to {interaction.user.name}#{interaction.user.discriminator}.")
 
+        # Change the semaphore to False
+        await Utils(self.bot).change_semaphore(False)
+
         # Delete the temporary files
         os.remove(to_obf_file_path)
         os.remove(obfuscated_file_path)
-        os.rmdir("temp")
+        os.rmdir(tempdir)
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Deleted temporary file(s) and folder(s).")
 
     @obfuscate_command.error

@@ -46,11 +46,11 @@ class Luraph:
             data = json.loads(response.text)
             return data["status"]
 
-    async def download_obfuscated(self, jobId: str):
+    async def download_obfuscated(self, jobId: str, id: str):
         url = f"{self.endpoint}/obfuscate/download/{jobId}"
         response = requests.get(url, headers=self.headers)
 
-        obfuscated_file_path = "temp/obfuscated.lua"
+        obfuscated_file_path = f"temp-{id}/obfuscated.lua"
         
         # Write the obfuscated file to a file
         with open(obfuscated_file_path, "wb") as f:

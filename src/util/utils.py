@@ -8,6 +8,7 @@ class Utils:
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.semaphore = False
 
     async def log(self, description: str):
         channel = self.bot.get_channel(Config().logs_channel)
@@ -16,3 +17,9 @@ class Utils:
         embed.set_footer(text=f"Luraph Bot - discord.gg/kws")
         embed.timestamp = datetime.utcnow()
         await channel.send(embed=embed)
+
+    async def change_semaphore(self, state: bool):
+        self.semaphore = state
+
+    async def get_semaphore(self):
+        return self.semaphore
