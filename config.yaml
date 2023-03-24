@@ -6,6 +6,11 @@ DISCORD_TOKEN: ""
 PREFIX: ""
 # Discord logs channel id
 LOGS_CHANNEL: 
+# Discord warn member id
+WARN_MEMBERS_ID: 
+  - ID1
+  - ID2
+  - ID3
 
 # Luraph #
 

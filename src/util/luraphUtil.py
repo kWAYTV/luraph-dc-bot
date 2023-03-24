@@ -43,11 +43,11 @@ class Luraph:
     async def check_status(self, jobId: str):
         url = f"{self.endpoint}/obfuscate/status/{jobId}"
         response = requests.get(url, headers=self.headers)
-        if response.text == "" or response.text == True:
+        if response.text == None or response.text == True or response.text == "":
             return True
         else:
             data = json.loads(response.text)
-            return data["status"]
+            return data["error"]
 
     # Download obfuscated script
     async def download_obfuscated(self, jobId: str, id: str):

@@ -27,14 +27,15 @@ class Obfuscate(commands.Cog):
             await interaction.followup.send("Sorry, but the bot is currently busy. Please try again later.", ephemeral=True)
             return
 
-        await Utils(self.bot).log(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).")
+        await Utils(self.bot).log(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe's trying to obfuscate {link}.")
+        await Utils(self.bot).send_warning(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe's trying to obfuscate {link}.")
 
         # Send a message to the user to make them wait
-        await interaction.followup.send(f"Obfuscating your code...")
+        await interaction.followup.send(f"Obfuscating your code...", ephemeral=True)
 
         tempdir = f"temp-{interaction.user.id}"
 
-        # If the folder data doesn't exist, create it
+        # If the folder temp doesn't exist, create it
         if not os.path.exists(tempdir):
             os.mkdir(tempdir)
             print(f"{Fore.GREEN} > {Style.RESET_ALL}Created folder 'temp'.")
@@ -62,8 +63,12 @@ class Obfuscate(commands.Cog):
             print(f"{Fore.GREEN} > {Style.RESET_ALL}Got recommended node: {node}")
         else:
             print(f"{Fore.RED} > {Style.RESET_ALL}Error getting the recommended node.")
-            await interaction.followup.send("Error getting the recommended node.")
+            await interaction.followup.send("Error getting the recommended node.", ephemeral=True)
             await Utils(self.bot).change_semaphore(False)
+            # Delete the temporary files
+            os.remove(to_obf_file_path)
+            os.remove(obfuscated_file_path)
+            os.rmdir(tempdir)
             return
 
         # Obfuscate the lua with luraph
@@ -72,21 +77,27 @@ class Obfuscate(commands.Cog):
             print(f"{Fore.GREEN} > {Style.RESET_ALL}Started obfuscating Lua with job id: {jobId}")
         else:
             print(f"{Fore.RED} > {Style.RESET_ALL}Error starting obfuscation.")
-            await interaction.followup.send("Error starting obfuscation.")
+            await interaction.followup.send("Error starting obfuscation.", ephemeral=True)
             await Utils(self.bot).change_semaphore(False)
+            # Delete the temporary files
+            os.remove(to_obf_file_path)
+            os.remove(obfuscated_file_path)
+            os.rmdir(tempdir)
             return
 
         # Check the status of the obfuscation
         status = await Luraph(self.bot).check_status(jobId)
-        if status:
+        if status == True:
             status = "Finished"
             print(f"{Fore.GREEN} > {Style.RESET_ALL}Obfuscation status: {status}")
         else:
-            status = json.loads(status)
-            status = status["error"]
-            print(f"{Fore.RED} > {Style.RESET_ALL}Error on the status of job {jobid}: {status}")
-            await interaction.followup.send(f"Error on the status of job {jobid}: {status}")
+            print(f"{Fore.RED} > {Style.RESET_ALL}Error on the status of job {jobId}: {status}")
+            await interaction.followup.send(f"Error on the status of job {jobId}: {status}", ephemeral=True)
             await Utils(self.bot).change_semaphore(False)
+            # Delete the temporary files
+            os.remove(to_obf_file_path)
+            os.remove(obfuscated_file_path)
+            os.rmdir(tempdir)
             return
 
         # Download the obfuscated file
@@ -97,6 +108,10 @@ class Obfuscate(commands.Cog):
             print(f"{Fore.RED} > {Style.RESET_ALL}Error downloading obfuscated file.")
             await interaction.followup.send("Error downloading obfuscated file.")
             await Utils(self.bot).change_semaphore(False)
+            # Delete the temporary files
+            os.remove(to_obf_file_path)
+            os.remove(obfuscated_file_path)
+            os.rmdir(tempdir)
             return
         
         # Send an embed to confirm the obfuscation
