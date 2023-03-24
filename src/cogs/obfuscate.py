@@ -18,7 +18,7 @@ class Obfuscate(commands.Cog):
     async def obfuscate_command(self, interaction: discord.Interaction, link: str):
         await interaction.response.defer(ephemeral=True)
 
-        await Utils().log(f"{Fore.GREEN} > {Style.RESET_ALL}Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).")
+        await Utils(self.bot).log(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).")
 
         # If the folder data doesn't exist, create it
         if not os.path.exists("temp"):

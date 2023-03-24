@@ -14,5 +14,5 @@ class Utils:
         embed = discord.Embed(title="Luraph Bot", description=description)
         embed.set_thumbnail(url="https://i.imgur.com/FdZlWFr.png")
         embed.set_footer(text=f"Luraph Bot - discord.gg/kws")
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = datetime.utcnow()
         await channel.send(embed=embed)
