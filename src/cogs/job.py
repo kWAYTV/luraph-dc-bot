@@ -42,8 +42,8 @@ class Job(commands.Cog):
 
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Sent status to {interaction.user.name}#{interaction.user.discriminator}.")
 
-        await Utils(self.bot).log(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe checked the status of job `{jobid}`. Status: `{status}`")
-        await Utils(self.bot).send_warning(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe checked the status of job `{jobid}`. Status: `{status}`")
+        await Utils(self.bot).log(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe checked the status of job `{jobid}`.\nStatus: `{status}`")
+        await Utils(self.bot).send_warning(f"Job command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe checked the status of job `{jobid}`.\nStatus: `{status}`")
 
     @job_command.error
     async def job_command_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):

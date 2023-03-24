@@ -1,5 +1,5 @@
 # Luraph Discord Bot
- Simple discord bot to obfuscate your lua's from Discord using Luraph
+ Simple discord bot to obfuscate your lua's from Discord using Luraph API
 # Set Up
  Fill in the `config.yaml` and the options file in `src/util/options.json`.
 # Commands
