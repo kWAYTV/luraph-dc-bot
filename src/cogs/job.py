@@ -18,8 +18,10 @@ class Job(commands.Cog):
     async def job_command(self, interaction: discord.Interaction, jobid: str):
         await interaction.response.defer(ephemeral=True)
 
+        # Send a message to the user to make them wait
         await interaction.followup.send(f"Checking job with id `{jobid}`...")
 
+        # Check the status of the job
         status = await Luraph(self.bot).check_status(jobid)
         if status:
             status = "Finished"

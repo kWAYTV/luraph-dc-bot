@@ -20,6 +20,9 @@ class Obfuscate(commands.Cog):
 
         await Utils(self.bot).log(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).")
 
+        # Send a message to the user to make them wait
+        await interaction.followup.send(f"Obfuscating your code...")
+
         # If the folder data doesn't exist, create it
         if not os.path.exists("temp"):
             os.mkdir("temp")
