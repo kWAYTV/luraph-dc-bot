@@ -13,12 +13,14 @@ class Luraph:
             'Luraph-API-Key': Config().luraph_api_key,
         }
 
+    # Get recommended luraph node
     async def get_recommended_node(self):
         url = f"{self.endpoint}/obfuscate/nodes"
         response = requests.get(url, headers=self.headers)
         data = json.loads(response.text)
         return data["recommendedId"]
 
+    # Obfuscate script
     async def obfuscate(self, filename: str, node: str, script: str, useTokens: bool):
 
         with open("src/util/options.json", "r") as f:
@@ -37,6 +39,7 @@ class Luraph:
         data = json.loads(response.text)
         return data["jobId"]
 
+    # Check obfuscation status
     async def check_status(self, jobId: str):
         url = f"{self.endpoint}/obfuscate/status/{jobId}"
         response = requests.get(url, headers=self.headers)
@@ -46,6 +49,7 @@ class Luraph:
             data = json.loads(response.text)
             return data["status"]
 
+    # Download obfuscated script
     async def download_obfuscated(self, jobId: str, id: str):
         url = f"{self.endpoint}/obfuscate/download/{jobId}"
         response = requests.get(url, headers=self.headers)
