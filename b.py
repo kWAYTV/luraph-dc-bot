@@ -70,9 +70,5 @@ if __name__ == "__main__":
     try:
         bot.run(Config().discord_token)
     except KeyboardInterrupt:
-        print(f"{Fore.MAGENTA}>{Fore.WHITE} Deleting temp files...")
-        os.remove("luraph.log")
-        shutil.rmtree("temp")
-        os.rmdir("temp")
         print(f"{Fore.MAGENTA}>{Fore.WHITE} Powering off the bot...")
         exit()

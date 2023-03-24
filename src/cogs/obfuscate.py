@@ -27,21 +27,43 @@ class Obfuscate(commands.Cog):
             await interaction.followup.send("Sorry, but the bot is currently busy. Please try again later.", ephemeral=True)
             return
 
+        # Filter if link exists
+        if not link:
+            await interaction.followup.send("Please provide a link to your Lua file.", ephemeral=True)
+            return
+
         await Utils(self.bot).log(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe's trying to obfuscate {link}.")
         await Utils(self.bot).send_warning(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\nHe's trying to obfuscate {link}.")
 
         # Send a message to the user to make them wait
-        await interaction.followup.send(f"Obfuscating your code...", ephemeral=True)
+        await interaction.followup.send(f"Starting obfuscation...", ephemeral=True)
 
         tempdir = f"temp-{interaction.user.id}"
 
         # If the folder temp doesn't exist, create it
         if not os.path.exists(tempdir):
             os.mkdir(tempdir)
-            print(f"{Fore.GREEN} > {Style.RESET_ALL}Created folder 'temp'.")
+            print(f"{Fore.GREEN} > {Style.RESET_ALL}Created temp folder for user.")
+        else:
+            # Remove the folder temp with all its contents
+            for file in os.listdir(tempdir):
+                os.remove(f"{tempdir}/{file}")
+            print(f"{Fore.GREEN} > {Style.RESET_ALL}Removed all files user had in 'temp'.")
+            os.rmdir(tempdir)
+            print(f"{Fore.GREEN} > {Style.RESET_ALL}Removed user folder 'temp'.")
+            os.mkdir(tempdir)
+            print(f"{Fore.GREEN} > {Style.RESET_ALL}Created user folder 'temp'.")
         
-        # Retrieve the Lua file from the specified URL
+        # Retrieve the Lua file
         lua_file = requests.get(link).content
+        if not lua_file:
+            await interaction.followup.send("Error retrieving the Lua file.", ephemeral=True)
+            await Utils(self.bot).change_semaphore(False)
+            # Delete the temporary files
+            os.remove(to_obf_file_path)
+            os.remove(obfuscated_file_path)
+            os.rmdir(tempdir)
+            return
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Retrieved Lua file from {link}.")
 
         # Convert the Lua file to Base64
