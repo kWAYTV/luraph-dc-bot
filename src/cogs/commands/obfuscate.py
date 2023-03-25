@@ -81,7 +81,7 @@ class Obfuscate(commands.Cog):
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Retrieved Lua file: {filename}.")
 
         # Convert the Lua file to Base64
-        lua_base64 = base64.b64encode(lua_file)
+        lua_base64 = base64.b64encode(lua_file.encode('utf-8'))
         print(f"{Fore.GREEN} > {Style.RESET_ALL}Converted Lua file to Base64.")
 
         # Set paths
