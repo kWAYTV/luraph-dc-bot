@@ -22,7 +22,7 @@ class Luraph:
     # Obfuscate script
     async def obfuscate(self, filename: str, node: str, script: str, useTokens: bool):
 
-        with open("src/config/luraph_options.json", "r") as f:
+        with open("src/options/luraph_options.json", "r") as f:
             options = json.load(f)
 
         url = f"{self.endpoint}/obfuscate/new"
