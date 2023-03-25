@@ -24,21 +24,21 @@ class Obfuscate(commands.Cog):
             mode = "link"
             filename = link
 
-        # Change the semaphore to True
-        await Utils().change_semaphore(True)
-
         # Get semaphore status
         semaphore = await Utils().get_semaphore()
         if semaphore:
             await interaction.followup.send("❌ Sorry, but the bot is currently busy. Please try again later.", ephemeral=True)
             return
 
+        # Change the semaphore to True
+        await Utils().change_semaphore(True)
+
         # Filter if file exists
         if mode == "file" and not file:
-            await interaction.followup.send("❌ Please provide a Lua file.", ephemeral=True)
+            await interaction.followup.send("❌ Please provide a Lua file in the attachment.", ephemeral=True)
             return
         if mode == "link" and not link:
-            await interaction.followup.send("❌ Please provide a Lua file.", ephemeral=True)
+            await interaction.followup.send("❌ Please provide a Lua file link.", ephemeral=True)
             return
 
         await Logger(self.bot).log(f"Obfuscate command invoked by {interaction.user.name}#{interaction.user.discriminator} ({interaction.user.id}).\n\nTo obfuscate file: {filename}.")
