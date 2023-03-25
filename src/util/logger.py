@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from src.config.config import Config
+from src.helper.config import Config
 from datetime import datetime
 
 class Logger:

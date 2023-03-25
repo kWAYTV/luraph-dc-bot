@@ -2,7 +2,7 @@
 import discord, os
 from discord.ext import commands
 from colorama import Fore
-from src.config.config import Config
+from src.helper.config import Config
 
 class Bot(commands.Bot):
     async def setup_hook(self) -> None:

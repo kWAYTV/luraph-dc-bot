@@ -1,6 +1,6 @@
 import json, requests
 from discord.ext import commands
-from src.config.config import Config
+from src.helper.config import Config
 from colorama import Fore, Style
 
 class Luraph:
